@@ -54,7 +54,7 @@
         <view class="qe-time">{{ item.timeLabel }}：{{ item.time }}</view>
         <view class="qe-actions">
           <text class="qe-action" @click="copyNo(item.no)">运单条码</text>
-          <text class="qe-action" @click="shareItem(item)">分享</text>
+          <!-- <text class="qe-action" @click="shareItem(item)">分享</text> -->
         </view>
       </view>
       <view class="qe-bottom-space" />
@@ -62,10 +62,6 @@
 
     <view v-if="showFilter" class="qe-mask" @click="showFilter = false">
       <view class="qe-panel qe-panel-top" @click.stop>
-        <view class="qe-panel-head">
-          <text class="qe-panel-space"></text>
-          <text class="qe-close" @click="showFilter = false">✕</text>
-        </view>
         <view class="qe-sec-title">快递状态</view>
         <view class="qe-tags">
           <view v-for="s in statusOptions" :key="s" class="qe-tag" :class="{ active: draftFilters.status === s }" @click="draftFilters.status = s">{{ s }}</view>
@@ -284,8 +280,8 @@ export default {
 .qe-close { color: #b7becb; }
 .qe-sec-title { margin-top: 16rpx; font-size: 34rpx; color: #1f2430; font-weight: 700; }
 .qe-tags { display: flex; flex-wrap: wrap; margin-top: 8rpx; }
-.qe-tag { background: #f5f7fa; color: #5f6778; border-radius: 999rpx; font-size: 32rpx; padding: 10rpx 24rpx; margin-right: 12rpx; margin-bottom: 10rpx; }
-.qe-tag.active { color: #ff3b30; background: #fff1f0; border: 1rpx solid #ff3b30; }
+.qe-tag { background: #f5f7fa; color: #5f6778; border-radius: 999rpx; font-size: 32rpx; padding: 10rpx 24rpx; margin-right: 12rpx; margin-bottom: 10rpx; border: 1rpx solid transparent; box-sizing: border-box; }
+.qe-tag.active { color: #ff3b30; background: #fff1f0; border-color: #ff3b30; }
 .qe-foot { display: flex; margin-top: 12rpx; }
 .qe-reset,.qe-confirm { flex: 1; border-radius: 999rpx; font-size: 36rpx; height: 84rpx; line-height: 84rpx; }
 .qe-reset { margin-right: 14rpx; color: #2f3745; background: #fff; border: 1rpx solid #dfe3ea; }
