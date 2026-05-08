@@ -1,49 +1,53 @@
 <template>
-  <view class="page">
-    <view class="header">
-      <view class="user-block">
-        <view class="avatar">{{ avatarText }}</view>
-        <view class="user-meta">
-          <view class="nickname">{{ displayName }}</view>
-          <view class="sub">{{ certifiedHint }}</view>
+  <view class="mine-page">
+    <view class="mine-header">
+      <view class="mine-user-block" @click="goRealName">
+        <view class="mine-avatar">{{ avatarText }}</view>
+        <view class="mine-user-meta">
+          <view class="mine-nickname">{{ displayName }}</view>
+          <view class="mine-sub">{{ certifiedHint }}</view>
         </view>
+        <text class="mine-user-arrow">›</text>
       </view>
     </view>
 
-    <view class="menu-card">
-      <view class="menu-row highlight" @click="goRealName">
-        <view class="menu-left">
-          <text class="menu-icon">🪪</text>
-          <view class="menu-texts">
-            <text class="menu-title">实名信息</text>
-            <text class="menu-desc">寄件需填写真实姓名与证件信息</text>
+    <view class="mine-data-card">
+      <view class="mine-data-item mine-data-item-tap" @click="goMyOrders">
+        <view class="mine-data-num">{{ orderCount }}</view>
+        <view class="mine-data-label">我的订单</view>
+        <text class="mine-data-hint">查看全部 ›</text>
+      </view>
+      <view class="mine-data-item">
+        <view class="mine-data-num">{{ userInfo.certified ? '是' : '否' }}</view>
+        <view class="mine-data-label">已实名</view>
+      </view>
+    </view>
+
+    <view class="mine-menu-card">
+      <view class="mine-menu-row highlight" @click="goRealName">
+        <view class="mine-menu-left">
+          <text class="mine-menu-icon">🪪</text>
+          <view class="mine-menu-texts">
+            <text class="mine-menu-title">实名信息</text>
+            <text class="mine-menu-desc">寄件需填写真实姓名与证件信息</text>
           </view>
         </view>
-        <view class="menu-right">
-          <text class="badge" :class="{ ok: userInfo.certified }">{{ certBadge }}</text>
-          <text class="arrow">›</text>
+        <view class="mine-menu-right">
+          <text class="mine-badge" :class="{ ok: userInfo.certified }">{{ certBadge }}</text>
+          <text class="mine-arrow">›</text>
         </view>
       </view>
 
-      <view class="menu-row" @click="toast('我的订单')">
-        <text class="menu-icon">📃</text>
-        <text class="menu-title plain">我的订单</text>
-        <text class="arrow">›</text>
+      <view class="mine-menu-row" @click="goMyOrders">
+        <text class="mine-menu-icon">📃</text>
+        <text class="mine-menu-title plain">我的订单</text>
+        <text class="mine-arrow">›</text>
       </view>
-      <view class="menu-row" @click="toast('地址簿')">
-        <text class="menu-icon">📍</text>
-        <text class="menu-title plain">地址簿</text>
-        <text class="arrow">›</text>
-      </view>
-      <view class="menu-row" @click="toast('联系客服')">
-        <text class="menu-icon">💬</text>
-        <text class="menu-title plain">联系客服</text>
-        <text class="arrow">›</text>
-      </view>
-      <view class="menu-row" @click="toast('设置')">
-        <text class="menu-icon">⚙️</text>
-        <text class="menu-title plain">设置</text>
-        <text class="arrow">›</text>
+
+      <view class="mine-menu-row" @click="goAddressBook">
+        <text class="mine-menu-icon">📍</text>
+        <text class="mine-menu-title plain">地址簿</text>
+        <text class="mine-arrow">›</text>
       </view>
     </view>
   </view>
@@ -54,6 +58,11 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'Mine',
+  data() {
+    return {
+      orderCount: 0
+    }
+  },
   computed: {
     ...mapState(['userInfo']),
     displayName() {
@@ -74,10 +83,25 @@ export default {
       return this.userInfo.certified ? '已认证' : '去填写'
     }
   },
+  onShow() {
+    this.refreshOrderCount()
+  },
   methods: {
+    refreshOrderCount() {
+      const list = uni.getStorageSync('mine_orders_list')
+      this.orderCount = Array.isArray(list) ? list.length : 0
+    },
+    goMyOrders() {
+      uni.navigateTo({ url: '/pages/mine/orders/orders' })
+    },
     goRealName() {
       uni.navigateTo({
         url: '/pages/mine/userInfo/userInfo'
+      })
+    },
+    goAddressBook() {
+      uni.navigateTo({
+        url: '/pages/mine/addressBook/addressBook'
       })
     },
     toast(msg) {
@@ -88,22 +112,40 @@ export default {
 </script>
 
 <style>
-.page {
+/* 页面级底色在 pages.json 的 backgroundColor 配置，避免用 page{} 带来副作用 */
+
+.mine-page {
+  width: 100%;
+  box-sizing: border-box;
   min-height: 100vh;
+  background-color: #f5f5f5;
+  overflow-x: hidden;
 }
 
-.header {
-  background: linear-gradient(180deg, #e1251b 0%, #c41e17 100%);
-  padding: 48rpx 32rpx 72rpx;
+/* 横向铺满视口，消除左侧 1px 露底；与导航栏同色见 pages.json */
+.mine-header {
+  box-sizing: border-box;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  background-color: #c41e17;
+  background-image: linear-gradient(180deg, #e1251b 0%, #c41e17 100%);
+  /* 轻微上移，盖住导航栏与页面内容之间的亚像素接缝 */
+  margin-top: -1rpx;
+  padding: calc(48rpx + 1rpx) 32rpx 72rpx;
   color: #fff;
 }
 
-.user-block {
+.mine-user-block {
   display: flex;
   align-items: center;
 }
 
-.avatar {
+.mine-user-arrow {
+  font-size: 38rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.mine-avatar {
   width: 112rpx;
   height: 112rpx;
   border-radius: 50%;
@@ -115,84 +157,121 @@ export default {
   font-weight: 700;
 }
 
-.user-meta {
+.mine-user-meta {
   margin-left: 28rpx;
   flex: 1;
 }
 
-.nickname {
+.mine-nickname {
   font-size: 36rpx;
   font-weight: 700;
 }
 
-.sub {
+.mine-sub {
   margin-top: 12rpx;
   font-size: 24rpx;
   opacity: 0.9;
 }
 
-.menu-card {
+.mine-data-card {
   background: #fff;
-  margin: -40rpx 24rpx 24rpx;
+  margin: -40rpx 24rpx 20rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  padding: 24rpx 0;
+}
+
+.mine-data-item {
+  flex: 1;
+  text-align: center;
+}
+
+.mine-data-item-tap {
+  border-right: 1rpx solid #f0f0f0;
+}
+
+.mine-data-hint {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #e1251b;
+}
+
+.mine-data-num {
+  font-size: 40rpx;
+  color: #e1251b;
+  font-weight: 700;
+}
+
+.mine-data-label {
+  font-size: 24rpx;
+  color: #666;
+  margin-top: 8rpx;
+}
+
+.mine-menu-card {
+  background: #fff;
+  margin: 0 24rpx 24rpx;
   border-radius: 16rpx;
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 
-.menu-row {
+.mine-menu-row {
   display: flex;
   align-items: center;
   padding: 28rpx 24rpx;
   border-bottom: 1rpx solid #f5f5f5;
 }
 
-.menu-row:last-child {
+.mine-menu-row:last-child {
   border-bottom: none;
 }
 
-.menu-row.highlight {
+.mine-menu-row.highlight {
   background: linear-gradient(90deg, #fff9f9 0%, #ffffff 100%);
 }
 
-.menu-left {
+.mine-menu-left {
   flex: 1;
   display: flex;
   align-items: center;
 }
 
-.menu-icon {
+.mine-menu-icon {
   font-size: 40rpx;
   margin-right: 20rpx;
 }
 
-.menu-texts {
+.mine-menu-texts {
   display: flex;
   flex-direction: column;
 }
 
-.menu-title {
+.mine-menu-title {
   font-size: 30rpx;
   color: #333;
   font-weight: 600;
 }
 
-.menu-title.plain {
+.mine-menu-title.plain {
   font-weight: 500;
   flex: 1;
 }
 
-.menu-desc {
+.mine-menu-desc {
   font-size: 24rpx;
   color: #999;
   margin-top: 6rpx;
 }
 
-.menu-right {
+.mine-menu-right {
   display: flex;
   align-items: center;
 }
 
-.badge {
+.mine-badge {
   font-size: 24rpx;
   color: #e1251b;
   background: #fff2f0;
@@ -201,12 +280,12 @@ export default {
   margin-right: 8rpx;
 }
 
-.badge.ok {
+.mine-badge.ok {
   color: #52c41a;
   background: #f6ffed;
 }
 
-.arrow {
+.mine-arrow {
   font-size: 36rpx;
   color: #ccc;
 }

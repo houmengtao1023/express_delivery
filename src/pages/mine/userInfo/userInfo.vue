@@ -1,174 +1,124 @@
 <template>
-  <view class="user-info-container">
-    <!-- 页面头部提示 -->
-    <view class="header-tip">
-      <view class="tip-icon">ℹ️</view>
-      <view class="tip-text">实名认证信息仅用于快递寄送，我们保护您的隐私</view>
+  <view class="cert-page">
+    <view class="cert-status">
+      <view class="cert-status-tag" :class="{ ok: $store.state.userInfo.certified }">
+        {{ $store.state.userInfo.certified ? '已实名' : '待实名' }}
+      </view>
+      <view class="cert-status-tip">实名信息仅用于寄件身份校验与安全风控</view>
     </view>
 
-    <!-- 表单区域 -->
-    <view class="form-section">
-      <!-- 真实姓名 -->
-      <view class="form-group">
-        <view class="form-label">
-          真实姓名
-          <text class="required">*</text>
-        </view>
-        <input 
-          v-model="formData.realName" 
-          class="form-input" 
-          placeholder="请输入真实姓名"
+    <view class="cert-card">
+      <view class="cert-group">
+        <view class="cert-label">真实姓名<text class="must">*</text></view>
+        <input
+          v-model.trim="formData.realName"
+          class="cert-input"
           maxlength="20"
+          placeholder="请输入与证件一致的姓名"
           @blur="validateField('realName')"
         />
-        <view v-if="errors.realName" class="error-message">{{ errors.realName }}</view>
+        <view v-if="errors.realName" class="cert-error">{{ errors.realName }}</view>
       </view>
 
-      <!-- 身份证号码 -->
-      <view class="form-group">
-        <view class="form-label">
-          身份证号码
-          <text class="required">*</text>
-        </view>
-        <input 
-          v-model="formData.idNumber" 
-          class="form-input" 
-          placeholder="请输入18位身份证号码"
+      <view class="cert-group">
+        <view class="cert-label">身份证号码<text class="must">*</text></view>
+        <input
+          v-model.trim="formData.idNumber"
+          class="cert-input"
           maxlength="18"
+          placeholder="请输入18位身份证号码"
+          @input="onIdInput"
           @blur="validateField('idNumber')"
         />
-        <view v-if="errors.idNumber" class="error-message">{{ errors.idNumber }}</view>
+        <view class="cert-extra" v-if="maskedIdNo">证件号：{{ maskedIdNo }}</view>
+        <view v-if="errors.idNumber" class="cert-error">{{ errors.idNumber }}</view>
       </view>
 
-      <!-- 手机号码 -->
-      <view class="form-group">
-        <view class="form-label">
-          手机号码
-          <text class="required">*</text>
-        </view>
-        <view class="phone-input-group">
-          <view class="country-code">+86</view>
-          <input 
-            v-model="formData.phoneNumber" 
-            class="form-input phone-input" 
-            placeholder="请输入11位手机号码"
+      <view class="cert-group">
+        <view class="cert-label">手机号码<text class="must">*</text></view>
+        <view class="cert-phone">
+          <view class="cert-country">+86</view>
+          <input
+            v-model.trim="formData.phoneNumber"
+            class="cert-input cert-phone-input"
             maxlength="11"
             type="number"
+            placeholder="请输入11位手机号"
             @blur="validateField('phoneNumber')"
           />
         </view>
-        <view v-if="errors.phoneNumber" class="error-message">{{ errors.phoneNumber }}</view>
+        <view v-if="errors.phoneNumber" class="cert-error">{{ errors.phoneNumber }}</view>
       </view>
 
-      <!-- 身份证照片 -->
-      <view class="form-group">
-        <view class="form-label">
-          身份证照片（正面）
-          <text class="required">*</text>
-        </view>
-        <view class="photo-upload">
-          <view v-if="formData.idPhotoFront" class="photo-preview">
-            <image :src="formData.idPhotoFront" class="preview-image" />
-            <view class="remove-btn" @click="removePhoto('front')">✕</view>
+      <view class="cert-group">
+        <view class="cert-label">身份证照片（正面）<text class="must">*</text></view>
+        <view class="cert-photo" @click="handlePhotoClick('front')">
+          <image v-if="formData.idPhotoFront" :src="formData.idPhotoFront" class="cert-photo-img" mode="aspectFill" />
+          <view v-else class="cert-photo-empty">
+            <view class="cert-photo-icon">📷</view>
+            <view>点击上传人像面</view>
           </view>
-          <view v-else class="photo-placeholder" @click="uploadPhoto('front')">
-            <view class="upload-icon">📸</view>
-            <view class="upload-text">点击上传正面照</view>
+          <view v-if="formData.idPhotoFront" class="cert-photo-actions">
+            <text class="cert-photo-btn" @click.stop="previewPhoto(formData.idPhotoFront)">预览</text>
+            <text class="cert-photo-btn danger" @click.stop="removePhoto('front')">删除</text>
           </view>
         </view>
-        <view v-if="errors.idPhotoFront" class="error-message">{{ errors.idPhotoFront }}</view>
+        <view v-if="errors.idPhotoFront" class="cert-error">{{ errors.idPhotoFront }}</view>
       </view>
 
-      <!-- 身份证照片反面 -->
-      <view class="form-group">
-        <view class="form-label">
-          身份证照片（反面）
-          <text class="required">*</text>
-        </view>
-        <view class="photo-upload">
-          <view v-if="formData.idPhotoBack" class="photo-preview">
-            <image :src="formData.idPhotoBack" class="preview-image" />
-            <view class="remove-btn" @click="removePhoto('back')">✕</view>
+      <view class="cert-group no-border">
+        <view class="cert-label">身份证照片（反面）<text class="must">*</text></view>
+        <view class="cert-photo" @click="handlePhotoClick('back')">
+          <image v-if="formData.idPhotoBack" :src="formData.idPhotoBack" class="cert-photo-img" mode="aspectFill" />
+          <view v-else class="cert-photo-empty">
+            <view class="cert-photo-icon">📷</view>
+            <view>点击上传国徽面</view>
           </view>
-          <view v-else class="photo-placeholder" @click="uploadPhoto('back')">
-            <view class="upload-icon">📸</view>
-            <view class="upload-text">点击上传反面照</view>
+          <view v-if="formData.idPhotoBack" class="cert-photo-actions">
+            <text class="cert-photo-btn" @click.stop="previewPhoto(formData.idPhotoBack)">预览</text>
+            <text class="cert-photo-btn danger" @click.stop="removePhoto('back')">删除</text>
           </view>
         </view>
-        <view v-if="errors.idPhotoBack" class="error-message">{{ errors.idPhotoBack }}</view>
-      </view>
-
-      <!-- 协议勾选 -->
-      <view class="agreement-section">
-        <view class="checkbox-item">
-          <checkbox 
-            v-model="formData.agreeProtocol" 
-            class="checkbox"
-          />
-          <view class="agreement-text">
-            我已阅读并同意
-            <text class="link-text" @click="showAgreement">《实名认证协议》</text>
-          </view>
-        </view>
-        <view v-if="errors.agreeProtocol" class="error-message">{{ errors.agreeProtocol }}</view>
-      </view>
-
-      <!-- 提交按钮 -->
-      <view class="button-group">
-        <button 
-          class="btn-submit" 
-          @click="submitCertification"
-          :loading="isSubmitting"
-          :disabled="isSubmitting"
-        >
-          {{ isSubmitting ? '提交中...' : '提交认证' }}
-        </button>
-        <button class="btn-cancel" @click="goBack">取消</button>
+        <view v-if="errors.idPhotoBack" class="cert-error">{{ errors.idPhotoBack }}</view>
       </view>
     </view>
 
-    <!-- 协议弹窗 -->
-    <view v-if="showAgreementModal" class="modal-overlay" @click="showAgreementModal = false">
-      <view class="modal-content" @click.stop>
-        <view class="modal-header">
-          <view class="modal-title">实名认证协议</view>
-          <view class="modal-close" @click="showAgreementModal = false">✕</view>
-        </view>
-        
-        <view class="modal-body">
-          <view class="agreement-content">
-            <view class="section-title">第一条 总则</view>
-            <view class="section-text">
-              用户通过实名认证后，获得更完整的快递服务功能。实名认证信息仅用于快递寄送和身份验证。
-            </view>
-
-            <view class="section-title">第二条 信息安全</view>
-            <view class="section-text">
-              我们采用行业领先的安全技术保护您的个人信息，不会向第三方披露您的实名信息，除非获得您的明确授权或法律要求。
-            </view>
-
-            <view class="section-title">第三条 用户责任</view>
-            <view class="section-text">
-              用户保证提交的信息真实、有效。用户对使用本服务过程中的行为承担法律责任。
-            </view>
-
-            <view class="section-title">第四条 服务条款</view>
-            <view class="section-text">
-              本服务的最终解释权归我们所有。我们保留随时修改服务条款的权利。
-            </view>
-          </view>
-        </view>
-
-        <view class="modal-footer">
-          <button class="btn-agree" @click="agreeAndClose">我同意</button>
-        </view>
+    <view class="cert-agreement">
+      <view class="cert-check" :class="{ checked: formData.agreeProtocol }" @click="toggleAgreement">
+        <text v-if="formData.agreeProtocol">✓</text>
+      </view>
+      <view class="cert-agreement-text">
+        已阅读并同意
+        <text class="cert-link" @click="showAgreement">《实名认证协议》</text>
       </view>
     </view>
+    <view v-if="errors.agreeProtocol" class="cert-error agreement-error">{{ errors.agreeProtocol }}</view>
 
-    <!-- 加载提示 -->
-    <view v-if="isSubmitting" class="loading-overlay">
-      <view class="loading-spinner"></view>
-      <view class="loading-text">正在提交...</view>
+    <view class="cert-actions">
+      <button class="cert-submit" :disabled="isSubmitting" @click="submitCertification">
+        {{ isSubmitting ? '提交中...' : '提交认证' }}
+      </button>
+      <button class="cert-cancel" @click="goBack">取消</button>
+    </view>
+
+    <view v-if="showAgreementModal" class="cert-modal-mask" @click="showAgreementModal = false">
+      <view class="cert-modal" @click.stop>
+        <view class="cert-modal-head">
+          <view class="cert-modal-title">实名认证协议</view>
+          <view class="cert-modal-close" @click="showAgreementModal = false">✕</view>
+        </view>
+        <view class="cert-modal-body">
+          <view class="cert-modal-sub">第一条 总则</view>
+          <view>实名认证信息仅用于快递寄件、身份核验与风险控制，不做其他用途。</view>
+          <view class="cert-modal-sub">第二条 安全保护</view>
+          <view>我们采用加密存储与访问控制机制，严格保护用户隐私数据安全。</view>
+          <view class="cert-modal-sub">第三条 责任说明</view>
+          <view>用户需保证提交信息真实有效，否则可能影响寄件服务正常使用。</view>
+        </view>
+        <view class="cert-modal-foot">
+          <button class="cert-modal-ok" @click="agreeAndClose">我同意</button>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -198,118 +148,122 @@ export default {
       showAgreementModal: false
     }
   },
+  computed: {
+    maskedIdNo() {
+      const id = this.formData.idNumber || ''
+      if (id.length < 8) return ''
+      return `${id.slice(0, 4)}********${id.slice(-4)}`
+    }
+  },
   onLoad() {
-    // 如果已经认证，加载现有数据
     const userInfo = this.$store.state.userInfo
-    if (userInfo.realName) {
-      this.formData = {
-        realName: userInfo.realName,
-        phoneNumber: userInfo.phoneNumber,
-        idNumber: userInfo.idNumber,
-        idPhotoFront: '',
-        idPhotoBack: '',
-        agreeProtocol: true
-      }
+    if (userInfo && userInfo.realName) {
+      this.formData.realName = userInfo.realName
+      this.formData.phoneNumber = userInfo.phoneNumber || ''
+      this.formData.idNumber = userInfo.idNumber || ''
+      this.formData.agreeProtocol = true
     }
   },
   methods: {
+    onIdInput(e) {
+      this.formData.idNumber = (e.detail.value || '').toUpperCase().replace(/\s/g, '')
+    },
+    toggleAgreement() {
+      this.formData.agreeProtocol = !this.formData.agreeProtocol
+      this.validateField('agreeProtocol')
+    },
     validateField(field) {
-      const { realName, idNumber, phoneNumber, idPhotoFront, idPhotoBack, agreeProtocol } = this.formData
-
-      switch (field) {
-        case 'realName':
-          if (!realName) {
-            this.errors.realName = '请输入真实姓名'
-          } else if (realName.length < 2) {
-            this.errors.realName = '姓名至少需要2个字符'
-          } else {
-            this.errors.realName = ''
-          }
-          break
-
-        case 'idNumber':
-          if (!idNumber) {
-            this.errors.idNumber = '请输入身份证号码'
-          } else if (idNumber.length !== 18) {
-            this.errors.idNumber = '请输入18位身份证号码'
-          } else if (!this.validateIDNumber(idNumber)) {
-            this.errors.idNumber = '身份证号码格式不正确'
-          } else {
-            this.errors.idNumber = ''
-          }
-          break
-
-        case 'phoneNumber':
-          if (!phoneNumber) {
-            this.errors.phoneNumber = '请输入手机号码'
-          } else if (!/^1[3-9]\d{9}$/.test(phoneNumber)) {
-            this.errors.phoneNumber = '请输入正确的手机号码'
-          } else {
-            this.errors.phoneNumber = ''
-          }
-          break
-
-        case 'idPhotoFront':
-          if (!idPhotoFront) {
-            this.errors.idPhotoFront = '请上传身份证正面照片'
-          } else {
-            this.errors.idPhotoFront = ''
-          }
-          break
-
-        case 'idPhotoBack':
-          if (!idPhotoBack) {
-            this.errors.idPhotoBack = '请上传身份证反面照片'
-          } else {
-            this.errors.idPhotoBack = ''
-          }
-          break
-
-        case 'agreeProtocol':
-          if (!agreeProtocol) {
-            this.errors.agreeProtocol = '请同意协议'
-          } else {
-            this.errors.agreeProtocol = ''
-          }
-          break
+      const data = this.formData
+      if (field === 'realName') {
+        if (!data.realName) {
+          this.errors.realName = '请输入真实姓名'
+        } else if (!/^[\u4e00-\u9fa5A-Za-z·\s]{2,20}$/.test(data.realName)) {
+          this.errors.realName = '姓名格式不正确'
+        } else {
+          this.errors.realName = ''
+        }
+      }
+      if (field === 'idNumber') {
+        if (!data.idNumber) {
+          this.errors.idNumber = '请输入身份证号码'
+        } else if (!this.validateIDNumber(data.idNumber)) {
+          this.errors.idNumber = '身份证号码格式不正确'
+        } else {
+          this.errors.idNumber = ''
+        }
+      }
+      if (field === 'phoneNumber') {
+        if (!data.phoneNumber) {
+          this.errors.phoneNumber = '请输入手机号码'
+        } else if (!/^1[3-9]\d{9}$/.test(data.phoneNumber)) {
+          this.errors.phoneNumber = '请输入正确的手机号码'
+        } else {
+          this.errors.phoneNumber = ''
+        }
+      }
+      if (field === 'idPhotoFront') {
+        this.errors.idPhotoFront = data.idPhotoFront ? '' : '请上传身份证正面照片'
+      }
+      if (field === 'idPhotoBack') {
+        this.errors.idPhotoBack = data.idPhotoBack ? '' : '请上传身份证反面照片'
+      }
+      if (field === 'agreeProtocol') {
+        this.errors.agreeProtocol = data.agreeProtocol ? '' : '请先勾选协议'
       }
     },
-    validateIDNumber(idNumber) {
-      // 简单的身份证号码验证（实际应该使用更复杂的算法）
-      if (!/^\d{17}[\dX]$/.test(idNumber)) {
-        return false
+    validateIDNumber(id) {
+      if (!/^\d{17}[\dX]$/.test(id)) return false
+      const factors = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]
+      const parity = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2']
+      let sum = 0
+      for (let i = 0; i < 17; i += 1) {
+        sum += Number(id[i]) * factors[i]
       }
-      return true
+      return parity[sum % 11] === id[17]
     },
-    uploadPhoto(side) {
+    handlePhotoClick(side) {
+      if ((side === 'front' && this.formData.idPhotoFront) || (side === 'back' && this.formData.idPhotoBack)) return
+      uni.showActionSheet({
+        itemList: ['拍照上传', '从相册选择'],
+        success: (res) => {
+          const sourceType = res.tapIndex === 0 ? ['camera'] : ['album']
+          this.uploadPhoto(side, sourceType)
+        }
+      })
+    },
+    uploadPhoto(side, sourceType) {
       uni.chooseImage({
         count: 1,
-        sizeType: ['original', 'compressed'],
-        sourceType: ['album', 'camera'],
+        sizeType: ['compressed'],
+        sourceType,
         success: (res) => {
-          const tempPath = res.tempFilePaths[0]
+          const path = res.tempFilePaths[0]
           if (side === 'front') {
-            this.formData.idPhotoFront = tempPath
+            this.formData.idPhotoFront = path
             this.errors.idPhotoFront = ''
           } else {
-            this.formData.idPhotoBack = tempPath
+            this.formData.idPhotoBack = path
             this.errors.idPhotoBack = ''
           }
-        },
-        fail: (err) => {
-          uni.showToast({ title: '上传失败', icon: 'none' })
         }
+      })
+    },
+    previewPhoto(path) {
+      uni.previewImage({
+        urls: [path],
+        current: path
       })
     },
     removePhoto(side) {
       if (side === 'front') {
         this.formData.idPhotoFront = ''
+        this.validateField('idPhotoFront')
       } else {
         this.formData.idPhotoBack = ''
+        this.validateField('idPhotoBack')
       }
     },
     submitCertification() {
-      // 验证所有字段
       this.validateField('realName')
       this.validateField('idNumber')
       this.validateField('phoneNumber')
@@ -317,40 +271,28 @@ export default {
       this.validateField('idPhotoBack')
       this.validateField('agreeProtocol')
 
-      // 检查是否有错误
-      const hasErrors = Object.values(this.errors).some(error => error !== '')
-      if (hasErrors) {
-        uni.showToast({ title: '请修正表单错误', icon: 'none' })
+      const hasError = Object.values(this.errors).some((v) => !!v)
+      if (hasError) {
+        uni.showToast({ title: '请完善必填信息', icon: 'none' })
         return
       }
-
-      // 开始提交
       this.isSubmitting = true
       uni.showLoading({ title: '提交中...' })
 
-      // 模拟上传照片到服务器
       setTimeout(() => {
-        // 保存到Vuex store
         this.$store.dispatch('updateUserInfo', {
           realName: this.formData.realName,
           phoneNumber: this.formData.phoneNumber,
           idNumber: this.formData.idNumber,
           certified: true
         })
-
         uni.hideLoading()
         this.isSubmitting = false
-
-        uni.showToast({
-          title: '认证成功！',
-          icon: 'success',
-          duration: 2000
-        })
-
+        uni.showToast({ title: '认证成功', icon: 'success' })
         setTimeout(() => {
           uni.navigateBack()
-        }, 1500)
-      }, 2000)
+        }, 1200)
+      }, 1200)
     },
     showAgreement() {
       this.showAgreementModal = true
@@ -368,358 +310,287 @@ export default {
 </script>
 
 <style>
-.user-info-container {
-  background-color: #f5f5f5;
+.cert-page {
   min-height: 100vh;
-  padding-bottom: 20rpx;
-}
-
-/* 头部提示 */
-.header-tip {
-  background-color: #e3f2fd;
-  margin: 20rpx;
-  padding: 16rpx;
-  border-radius: 8rpx;
-  display: flex;
-  align-items: flex-start;
-  gap: 12rpx;
-  border-left: 4rpx solid #1976d2;
-}
-
-.tip-icon {
-  font-size: 32rpx;
-  flex-shrink: 0;
-}
-
-.tip-text {
-  font-size: 26rpx;
-  color: #1976d2;
-  line-height: 1.4;
-}
-
-/* 表单区域 */
-.form-section {
-  background-color: white;
-  margin: 0 20rpx;
-  border-radius: 8rpx;
-  overflow: hidden;
-  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
-}
-
-.form-group {
-  padding: 24rpx 20rpx;
-  border-bottom: 1rpx solid #eee;
-  position: relative;
-}
-
-.form-group:last-of-type {
-  border-bottom: none;
-}
-
-.form-label {
-  font-size: 28rpx;
-  color: #333;
-  margin-bottom: 12rpx;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-}
-
-.required {
-  color: #DD001B;
-  margin-left: 4rpx;
-}
-
-.form-input {
-  width: 100%;
-  padding: 14rpx 16rpx;
-  border: 1rpx solid #ddd;
-  border-radius: 4rpx;
-  font-size: 28rpx;
-  background-color: #fff;
-  color: #333;
+  background: #f6f7f9;
+  padding: 20rpx;
   box-sizing: border-box;
 }
 
-.form-input::placeholder {
-  color: #999;
+.cert-status {
+  background: #eef7ff;
+  border: 1rpx solid #d3e8ff;
+  border-radius: 12rpx;
+  padding: 18rpx 20rpx;
+  margin-bottom: 16rpx;
 }
 
-.form-input:focus {
-  border-color: #DD001B;
-  box-shadow: 0 0 0 2rpx rgba(221, 0, 27, 0.1);
+.cert-status-tag {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #e1251b;
+  background: #fff2f1;
+  border: 1rpx solid #ffd2cf;
+  border-radius: 999rpx;
+  padding: 4rpx 14rpx;
 }
 
-.phone-input-group {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
+.cert-status-tag.ok {
+  color: #389e0d;
+  background: #f6ffed;
+  border-color: #d9f7be;
 }
 
-.country-code {
+.cert-status-tip {
+  font-size: 24rpx;
+  color: #5b7ea6;
+  margin-top: 10rpx;
+}
+
+.cert-card {
+  background: #fff;
+  border-radius: 14rpx;
+  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.cert-group {
+  border-bottom: 1rpx solid #f1f1f1;
+  padding: 22rpx 20rpx;
+}
+
+.cert-group.no-border {
+  border-bottom: none;
+}
+
+.cert-label {
+  font-size: 28rpx;
+  color: #222;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+}
+
+.must {
+  color: #e1251b;
+  margin-left: 4rpx;
+}
+
+.cert-input {
+  width: 100%;
+  height: 76rpx;
+  box-sizing: border-box;
+  border: 1rpx solid #dedede;
+  border-radius: 10rpx;
+  background: #fafafa;
+  padding: 0 16rpx;
   font-size: 28rpx;
   color: #333;
-  font-weight: 500;
-  min-width: 50rpx;
 }
 
-.phone-input {
-  flex: 1;
-}
-
-.error-message {
-  color: #DD001B;
-  font-size: 24rpx;
+.cert-extra {
   margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #9b9b9b;
 }
 
-/* 照片上传 */
-.photo-upload {
-  margin-top: 12rpx;
+.cert-phone {
+  display: flex;
+  align-items: center;
 }
 
-.photo-placeholder {
-  border: 2rpx dashed #ddd;
-  border-radius: 8rpx;
-  padding: 40rpx 20rpx;
+.cert-country {
+  width: 92rpx;
+  height: 76rpx;
+  line-height: 76rpx;
+  text-align: center;
+  border: 1rpx solid #dedede;
+  border-right: none;
+  border-radius: 10rpx 0 0 10rpx;
+  background: #fafafa;
+  font-size: 28rpx;
+}
+
+.cert-phone-input {
+  border-radius: 0 10rpx 10rpx 0;
+}
+
+.cert-photo {
+  border: 2rpx dashed #e2e2e2;
+  border-radius: 12rpx;
+  background: #fbfbfb;
+  overflow: hidden;
+}
+
+.cert-photo-empty {
+  min-height: 220rpx;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  background-color: #fafafa;
-}
-
-.photo-placeholder:active {
-  background-color: #f0f0f0;
-  border-color: #DD001B;
-}
-
-.upload-icon {
-  font-size: 64rpx;
-  margin-bottom: 12rpx;
-}
-
-.upload-text {
-  font-size: 26rpx;
+  align-items: center;
   color: #999;
+  font-size: 26rpx;
 }
 
-.photo-preview {
-  position: relative;
-  border-radius: 8rpx;
-  overflow: hidden;
-  background-color: #f0f0f0;
+.cert-photo-icon {
+  font-size: 58rpx;
+  margin-bottom: 8rpx;
 }
 
-.preview-image {
+.cert-photo-img {
   width: 100%;
-  height: 200rpx;
-  object-fit: cover;
-  display: block;
+  height: 220rpx;
 }
 
-.remove-btn {
-  position: absolute;
-  top: 8rpx;
-  right: 8rpx;
-  width: 40rpx;
-  height: 40rpx;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
-  border-radius: 50%;
+.cert-photo-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12rpx 14rpx;
+  background: #fff;
+}
+
+.cert-photo-btn {
+  font-size: 24rpx;
+  color: #4d7dbd;
+  margin-left: 24rpx;
+}
+
+.cert-photo-btn.danger {
+  color: #e1251b;
+}
+
+.cert-agreement {
+  display: flex;
+  align-items: center;
+  margin: 22rpx 6rpx 0;
+}
+
+.cert-check {
+  width: 34rpx;
+  height: 34rpx;
+  border: 1rpx solid #d6d6d6;
+  border-radius: 8rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28rpx;
+  color: #fff;
+  font-size: 22rpx;
+  margin-right: 12rpx;
 }
 
-/* 协议区域 */
-.agreement-section {
-  padding: 24rpx 20rpx;
-  border-bottom: 1rpx solid #eee;
+.cert-check.checked {
+  background: #e1251b;
+  border-color: #e1251b;
 }
 
-.checkbox-item {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
+.cert-agreement-text {
+  font-size: 24rpx;
+  color: #666;
 }
 
-.checkbox {
-  width: 32rpx;
-  height: 32rpx;
-  flex-shrink: 0;
-}
-
-.agreement-text {
-  font-size: 26rpx;
-  color: #333;
-  line-height: 1.4;
-}
-
-.link-text {
-  color: #1976d2;
+.cert-link {
+  color: #2b6cb0;
   text-decoration: underline;
 }
 
-/* 按钮组 */
-.button-group {
-  padding: 24rpx 20rpx;
-  display: flex;
-  flex-direction: column;
-  gap: 12rpx;
+.agreement-error {
+  margin-left: 8rpx;
 }
 
-.btn-submit {
-  background-color: #DD001B;
-  color: white;
-  border: none;
-  padding: 18rpx;
-  border-radius: 4rpx;
-  font-size: 32rpx;
-  font-weight: bold;
+.cert-error {
+  margin-top: 8rpx;
+  color: #e1251b;
+  font-size: 23rpx;
 }
 
-.btn-submit:active {
-  background-color: #b30015;
+.cert-actions {
+  margin-top: 20rpx;
 }
 
-.btn-submit[disabled] {
-  opacity: 0.6;
+.cert-submit,
+.cert-cancel {
+  border-radius: 10rpx;
+  font-size: 30rpx;
 }
 
-.btn-cancel {
-  background-color: #f5f5f5;
-  color: #333;
-  border: 1rpx solid #ddd;
-  padding: 18rpx;
-  border-radius: 4rpx;
-  font-size: 32rpx;
-  font-weight: bold;
+.cert-submit {
+  background: #e1251b;
+  color: #fff;
 }
 
-.btn-cancel:active {
-  background-color: #eee;
+.cert-submit[disabled] {
+  opacity: 0.7;
 }
 
-/* 模态框 */
-.modal-overlay {
+.cert-cancel {
+  margin-top: 12rpx;
+  color: #666;
+  background: #fff;
+  border: 1rpx solid #e5e5e5;
+}
+
+.cert-modal-mask {
   position: fixed;
-  top: 0;
   left: 0;
   right: 0;
+  top: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: flex-end;
   z-index: 100;
 }
 
-.modal-content {
-  background-color: white;
+.cert-modal {
   width: 100%;
-  border-radius: 16rpx 16rpx 0 0;
-  max-height: 80vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  background: #fff;
+  border-radius: 18rpx 18rpx 0 0;
+  max-height: 78vh;
+  overflow: hidden;
 }
 
-.modal-header {
+.cert-modal-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20rpx;
   border-bottom: 1rpx solid #eee;
-  position: sticky;
-  top: 0;
-  background-color: white;
-  z-index: 10;
 }
 
-.modal-title {
+.cert-modal-title {
   font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
+  font-weight: 700;
 }
 
-.modal-close {
-  font-size: 32rpx;
+.cert-modal-close {
+  font-size: 30rpx;
   color: #999;
 }
 
-.modal-body {
-  flex: 1;
+.cert-modal-body {
   padding: 20rpx;
-  overflow-y: auto;
-}
-
-.agreement-content {
   font-size: 26rpx;
   color: #666;
   line-height: 1.8;
+  max-height: 50vh;
+  overflow-y: auto;
 }
 
-.section-title {
+.cert-modal-sub {
+  margin-top: 12rpx;
+  margin-bottom: 8rpx;
   font-size: 28rpx;
-  font-weight: bold;
   color: #333;
-  margin-top: 16rpx;
-  margin-bottom: 12rpx;
+  font-weight: 600;
 }
 
-.section-text {
-  color: #666;
-  margin-bottom: 16rpx;
+.cert-modal-foot {
+  padding: 16rpx 20rpx 24rpx;
 }
 
-.modal-footer {
-  padding: 20rpx;
-  border-top: 1rpx solid #eee;
-  background-color: #f5f5f5;
-}
-
-.btn-agree {
-  background-color: #DD001B;
-  color: white;
-  border: none;
-  padding: 16rpx;
-  border-radius: 4rpx;
-  font-size: 28rpx;
-  font-weight: bold;
-}
-
-.btn-agree:active {
-  background-color: #b30015;
-}
-
-/* 加载状态 */
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-}
-
-.loading-spinner {
-  width: 60rpx;
-  height: 60rpx;
-  border: 4rpx solid #f0f0f0;
-  border-top-color: #DD001B;
-  border-radius: 50%;
-}
-
-.loading-text {
-  margin-top: 20rpx;
-  color: white;
+.cert-modal-ok {
+  background: #e1251b;
+  color: #fff;
+  border-radius: 10rpx;
   font-size: 28rpx;
 }
-
 </style>
