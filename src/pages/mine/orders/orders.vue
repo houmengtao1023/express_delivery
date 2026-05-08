@@ -24,7 +24,7 @@
 </template>
 
 <script>
-const ORDERS_KEY = 'mine_orders_list'
+import { orderApi } from '../../../utils/api'
 
 export default {
   name: 'MineOrders',
@@ -37,9 +37,25 @@ export default {
     this.loadList()
   },
   methods: {
-    loadList() {
-      const raw = uni.getStorageSync(ORDERS_KEY)
-      this.list = Array.isArray(raw) ? raw : []
+    async loadList() {
+      try {
+        const data = await orderApi.list()
+        const arr = Array.isArray(data) ? data : []
+        this.list = arr.map((it) => ({
+          id: it.id,
+          no: it.no,
+          status: it.status,
+          fromCity: it.senderCity,
+          fromName: it.senderName,
+          toCity: it.receiverCity,
+          toName: it.receiverName,
+          createTime: it.createTime,
+          payType: it.payType,
+          serviceType: it.serviceType === 'pickup' ? '上门取件' : '服务点自寄'
+        }))
+      } catch (e) {
+        this.list = []
+      }
     },
     showDetail(item) {
       uni.showModal({

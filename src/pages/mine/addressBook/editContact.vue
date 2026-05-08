@@ -55,7 +55,7 @@
 </template>
 
 <script>
-const STORAGE_KEY = 'mine_address_book'
+import { addressApi } from '../../../utils/api'
 
 export default {
   name: 'EditContact',
@@ -79,12 +79,18 @@ export default {
   onLoad(options) {
     if (options && options.id) {
       this.id = Number(options.id)
-      const list = uni.getStorageSync(STORAGE_KEY) || []
-      const found = list.find((x) => x.id === this.id)
-      if (found) this.form = { ...found }
+      this.loadDetail()
     }
   },
   methods: {
+    async loadDetail() {
+      try {
+        const data = await addressApi.detail(this.id)
+        if (data) this.form = { ...this.form, ...data }
+      } catch (e) {
+        // 已弹错误提示
+      }
+    },
     clearForm() {
       this.form = {
         name: '',
@@ -146,29 +152,28 @@ export default {
 
       uni.showToast({ title: '识别完成，请核对', icon: 'none' })
     },
-    save() {
+    async save() {
       if (!this.form.name) return uni.showToast({ title: '请输入姓名', icon: 'none' })
       if (!/^1[3-9]\d{9}$/.test(this.form.phone)) return uni.showToast({ title: '手机号格式不正确', icon: 'none' })
       if (!this.form.province || !this.form.city || !this.form.detail) {
         return uni.showToast({ title: '请填写完整地址信息', icon: 'none' })
       }
-      const list = uni.getStorageSync(STORAGE_KEY) || []
-      if (this.id) {
-        const idx = list.findIndex((x) => x.id === this.id)
-        if (idx > -1) list[idx] = { ...list[idx], ...this.form, id: this.id }
-      } else {
-        list.unshift({ ...this.form, id: Date.now() })
-      }
-      if (this.form.isDefault) {
-        list.forEach((item) => {
-          item.isDefault = item.id === (this.id || list[0].id)
+      try {
+        await addressApi.save({
+          id: this.id || undefined,
+          name: this.form.name,
+          phone: this.form.phone,
+          province: this.form.province,
+          city: this.form.city,
+          detail: this.form.detail,
+          tag: this.form.tag,
+          isDefault: !!this.form.isDefault
         })
-      } else if (!list.some((x) => x.isDefault)) {
-        list[0].isDefault = true
+        uni.showToast({ title: '保存成功', icon: 'success' })
+        setTimeout(() => uni.navigateBack(), 500)
+      } catch (e) {
+        // 已弹错误提示
       }
-      uni.setStorageSync(STORAGE_KEY, list)
-      uni.showToast({ title: '保存成功', icon: 'success' })
-      setTimeout(() => uni.navigateBack(), 500)
     }
   }
 }

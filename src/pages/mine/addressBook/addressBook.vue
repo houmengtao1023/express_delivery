@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import { addressApi } from '../../../utils/api'
+
 const STORAGE_KEY = 'mine_address_book'
 
 export default {
@@ -92,37 +94,31 @@ export default {
     this.loadList()
   },
   methods: {
-    loadList() {
-      const cache = uni.getStorageSync(STORAGE_KEY)
-      if (Array.isArray(cache) && cache.length) {
-        this.list = cache
-      } else {
-        this.list = [
-          {
-            id: 1,
-            name: '侯梦涛',
-            phone: '15122226268',
-            province: '北京',
-            city: '朝阳区',
-            detail: '东湖街道叶青大厦D座4层',
-            tag: '公司',
-            isDefault: true
-          }
-        ]
-        this.saveList()
+    async loadList() {
+      try {
+        const data = await addressApi.list()
+        this.list = Array.isArray(data) ? data : []
+        this.saveCache()
+      } catch (e) {
+        const cache = uni.getStorageSync(STORAGE_KEY)
+        this.list = Array.isArray(cache) ? cache : []
       }
     },
-    saveList() {
+    saveCache() {
       uni.setStorageSync(STORAGE_KEY, this.list)
     },
     maskPhone(phone) {
       if (!phone || phone.length < 7) return phone || ''
       return `${phone.slice(0, 3)}****${phone.slice(-4)}`
     },
-    toggleDefault(id) {
+    async toggleDefault(id) {
       if (this.pickMode) return
-      this.list = this.list.map((item) => ({ ...item, isDefault: item.id === id }))
-      this.saveList()
+      try {
+        await addressApi.setDefault(id)
+        await this.loadList()
+      } catch (e) {
+        // 已弹错误提示
+      }
     },
     editItem(id) {
       if (this.pickMode) return
@@ -138,13 +134,14 @@ export default {
       uni.showModal({
         title: '提示',
         content: '确定删除该地址吗？',
-        success: (res) => {
+        success: async (res) => {
           if (!res.confirm) return
-          this.list = this.list.filter((item) => item.id !== id)
-          if (this.list.length > 0 && !this.list.some((item) => item.isDefault)) {
-            this.list[0].isDefault = true
+          try {
+            await addressApi.remove(id)
+            await this.loadList()
+          } catch (e) {
+            // 已弹错误提示
           }
-          this.saveList()
         }
       })
     },
@@ -169,19 +166,21 @@ export default {
         uni.showToast({ title: '请先选择要删除的地址', icon: 'none' })
         return
       }
+      const ids = [...this.selectedIds]
       uni.showModal({
         title: '提示',
-        content: `确定删除选中的 ${this.selectedIds.length} 条地址吗？`,
-        success: (res) => {
+        content: `确定删除选中的 ${ids.length} 条地址吗？`,
+        success: async (res) => {
           if (!res.confirm) return
-          this.list = this.list.filter((item) => !this.selectedIds.includes(item.id))
-          if (this.list.length > 0 && !this.list.some((item) => item.isDefault)) {
-            this.list[0].isDefault = true
+          try {
+            await Promise.all(ids.map((id) => addressApi.remove(id)))
+            this.selectedIds = []
+            this.isManage = false
+            await this.loadList()
+            uni.showToast({ title: '删除成功', icon: 'success' })
+          } catch (e) {
+            // 已弹错误提示
           }
-          this.saveList()
-          this.selectedIds = []
-          this.isManage = false
-          uni.showToast({ title: '删除成功', icon: 'success' })
         }
       })
     },

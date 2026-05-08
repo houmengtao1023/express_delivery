@@ -122,8 +122,9 @@
 </template>
 
 <script>
+import { orderApi, stationApi } from '../../utils/api'
+
 const SEND_DRAFT_KEY = 'send_express_draft'
-const MINE_ORDERS_KEY = 'mine_orders_list'
 
 export default {
   name: 'SendExpress',
@@ -131,19 +132,21 @@ export default {
     return {
       serviceType: 'pickup',
       pickupDays: ['今天', '明天', '后天'],
+      pickupSlotsByDay: [['一小时内']],
       selectedDayIndex: 0,
       selectedSlotIndex: 0,
       showTimePicker: false,
       stationType: '营业部',
       stationInfo: {
-        name: '北京市站',
-        distance: '777m',
-        address: '朝阳区望京街道东湖国际广场1层'
+        name: '',
+        distance: '',
+        address: ''
       },
       payType: '寄付现结',
       payTypes: ['寄付现结', '寄方月结', '到付'],
       sender: {},
-      receiver: {}
+      receiver: {},
+      estimatedPrice: '--'
     }
   },
   computed: {
@@ -156,38 +159,42 @@ export default {
       return `${this.receiver.province || ''}${this.receiver.city || ''}${this.receiver.detail || ''}`
     },
     currentSlots() {
-      const day = this.pickupDays[this.selectedDayIndex] || '今天'
-      if (day === '今天') {
-        return ['一小时内', ...this.generateHourSlots(12, 21)]
-      }
-      return this.generateHourSlots(9, 21)
+      return this.pickupSlotsByDay[this.selectedDayIndex] || []
     },
     pickupTimeText() {
       const day = this.pickupDays[this.selectedDayIndex] || '今天'
-      const slot = this.currentSlots[this.selectedSlotIndex] || '一小时内'
-      return `${day} ${slot}`
+      const slot = this.currentSlots[this.selectedSlotIndex] || ''
+      return slot ? `${day} ${slot}` : ''
+    }
+  },
+  watch: {
+    serviceType() {
+      this.refreshEstimate()
+      if (this.serviceType === 'station') {
+        this.loadStation()
+      }
     },
-    estimatedPrice() {
-      const hasSender = !!this.sender.id
-      const hasReceiver = !!this.receiver.id
-      if (!hasSender || !hasReceiver) return '--'
-      const base = this.serviceType === 'pickup' ? 12 : 9
-      return base.toFixed(2)
+    stationType() {
+      if (this.serviceType === 'station') {
+        this.loadStation()
+      }
+    },
+    'sender.id'() {
+      this.refreshEstimate()
+    },
+    'receiver.id'() {
+      this.refreshEstimate()
     }
   },
   onShow() {
     this.loadDraftData()
+    this.loadPickupSlots()
+    if (this.serviceType === 'station') {
+      this.loadStation()
+    }
+    this.refreshEstimate()
   },
   methods: {
-    generateHourSlots(start, end) {
-      const slots = []
-      for (let hour = start; hour < end; hour += 1) {
-        const from = `${hour}`.padStart(2, '0')
-        const to = `${hour + 1}`.padStart(2, '0')
-        slots.push(`${from}:00-${to}:00`)
-      }
-      return slots
-    },
     maskPhone(phone) {
       if (!phone || phone.length < 7) return ''
       return `${phone.slice(0, 3)}****${phone.slice(-4)}`
@@ -221,6 +228,64 @@ export default {
         }
       })
     },
+    async loadPickupSlots() {
+      try {
+        const data = await orderApi.pickupSlots()
+        if (data && Array.isArray(data.days) && Array.isArray(data.slots)) {
+          this.pickupDays = data.days
+          this.pickupSlotsByDay = data.slots
+          if (this.selectedSlotIndex >= this.currentSlots.length) {
+            this.selectedSlotIndex = 0
+          }
+        }
+      } catch (e) {
+        this.pickupSlotsByDay = [
+          ['一小时内', ...this.generateHourSlots(12, 21)],
+          this.generateHourSlots(9, 21),
+          this.generateHourSlots(9, 21)
+        ]
+      }
+    },
+    async loadStation() {
+      try {
+        const data = await stationApi.nearest(this.stationType)
+        if (data) {
+          this.stationInfo = {
+            name: data.name || '',
+            distance: data.distance || '',
+            address: data.address || '',
+            id: data.id
+          }
+        }
+      } catch (e) {
+        // 忽略，保留本地兜底
+      }
+    },
+    async refreshEstimate() {
+      if (!this.sender.id || !this.receiver.id) {
+        this.estimatedPrice = '--'
+        return
+      }
+      try {
+        const data = await orderApi.estimate({
+          senderId: this.sender.id,
+          receiverId: this.receiver.id,
+          serviceType: this.serviceType
+        })
+        this.estimatedPrice = data && data.price != null ? Number(data.price).toFixed(2) : '--'
+      } catch (e) {
+        this.estimatedPrice = this.serviceType === 'pickup' ? '12.00' : '9.00'
+      }
+    },
+    generateHourSlots(start, end) {
+      const slots = []
+      for (let hour = start; hour < end; hour += 1) {
+        const from = `${hour}`.padStart(2, '0')
+        const to = `${hour + 1}`.padStart(2, '0')
+        slots.push(`${from}:00-${to}:00`)
+      }
+      return slots
+    },
     saveDraftData() {
       uni.setStorageSync(SEND_DRAFT_KEY, {
         sender: this.sender,
@@ -253,7 +318,7 @@ export default {
         this.receiver = {}
       }
     },
-    submitOrder() {
+    async submitOrder() {
       if (!this.sender.id || !this.receiver.id) {
         uni.showToast({ title: '请先补全寄件人和收件人', icon: 'none' })
         return
@@ -263,30 +328,20 @@ export default {
         return
       }
       this.saveDraftData()
-      this.appendMineOrder()
-      uni.showToast({ title: '下单成功', icon: 'success' })
-    },
-    appendMineOrder() {
-      const raw = uni.getStorageSync(MINE_ORDERS_KEY)
-      const arr = Array.isArray(raw) ? raw : []
-      const ts = Date.now()
-      const no = `JDK${String(ts).slice(-12)}`
-      const d = new Date()
-      const pad = (n) => (n < 10 ? `0${n}` : `${n}`)
-      const createTime = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
-      arr.unshift({
-        id: ts,
-        no,
-        status: '待揽收',
-        fromCity: this.sender.city || '',
-        fromName: this.sender.name || '寄件人',
-        toCity: this.receiver.city || '',
-        toName: this.receiver.name || '收件人',
-        createTime,
-        payType: this.payType,
-        serviceType: this.serviceType === 'pickup' ? '上门取件' : '服务点自寄'
-      })
-      uni.setStorageSync(MINE_ORDERS_KEY, arr)
+      try {
+        await orderApi.create({
+          senderId: this.sender.id,
+          receiverId: this.receiver.id,
+          serviceType: this.serviceType,
+          stationType: this.serviceType === 'station' ? this.stationType : null,
+          stationId: this.serviceType === 'station' ? this.stationInfo.id : null,
+          pickupTime: this.serviceType === 'pickup' ? this.pickupTimeText : null,
+          payType: this.payType
+        })
+        uni.showToast({ title: '下单成功', icon: 'success' })
+      } catch (e) {
+        // request 已弹错误提示
+      }
     }
   }
 }
