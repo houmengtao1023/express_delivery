@@ -1,0 +1,53 @@
+# GitIgnore for UniApp Project
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# HBuilderX
+.hbuilderx/
+unpackage/
+dist/
+
+# Compiled
+build/
+.vuepress/dist
+
+# Temporary files
+.DS_Store
+*.log
+.cache/
+.vuepress/.cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*~
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Test
+coverage/
+.nyc_output/
+
+# Build output
+dist-ssr/
+*.local
+
+# Modules
+**/.module-cache
+
+# Project specific
+debug.log
+test-results/
