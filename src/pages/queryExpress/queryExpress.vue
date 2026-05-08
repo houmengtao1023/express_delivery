@@ -17,11 +17,6 @@
       </view>
     </view>
 
-    <view class="qe-banner">
-      <text>1分限时秒杀 寄件立省4元！</text>
-      <text class="qe-banner-btn">立即查看</text>
-    </view>
-
     <view v-if="filteredList.length === 0" class="qe-empty-wrap">
       <view class="qe-empty-icon">📦</view>
       <view class="qe-empty-title">没找到符合条件的运单哦～</view>
