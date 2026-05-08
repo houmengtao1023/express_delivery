@@ -1,0 +1,23 @@
+{
+  "name": "express_delivery",
+  "appid": "__UNI__EXPRESS01",
+  "description": "寄快递 / 查快递 / 我的（含实名信息）",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "mp-weixin": {
+    "appid": "",
+    "setting": {
+      "urlCheck": false,
+      "es6": true,
+      "postcss": true,
+      "minified": true
+    },
+    "usingComponents": true,
+    "permission": {}
+  },
+  "vueVersion": "2",
+  "uniStatistics": {
+    "enable": false
+  }
+}

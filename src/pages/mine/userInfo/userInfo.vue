@@ -367,7 +367,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .user-info-container {
   background-color: #f5f5f5;
   min-height: 100vh;
@@ -487,7 +487,6 @@ export default {
   align-items: center;
   justify-content: center;
   background-color: #fafafa;
-  transition: all 0.3s;
 }
 
 .photo-placeholder:active {
@@ -715,7 +714,6 @@ export default {
   border: 4rpx solid #f0f0f0;
   border-top-color: #DD001B;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
 }
 
 .loading-text {
@@ -724,9 +722,4 @@ export default {
   font-size: 28rpx;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 </style>

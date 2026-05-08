@@ -1,0 +1,68 @@
+{
+  "pages": [
+    {
+      "path": "pages/sendExpress/sendExpress",
+      "style": {
+        "navigationBarTitleText": "寄快递",
+        "navigationBarBackgroundColor": "#E1251B",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/queryExpress/queryExpress",
+      "style": {
+        "navigationBarTitleText": "查快递",
+        "navigationBarBackgroundColor": "#E1251B",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/mine/mine",
+      "style": {
+        "navigationBarTitleText": "我的",
+        "navigationBarBackgroundColor": "#E1251B",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/mine/userInfo/userInfo",
+      "style": {
+        "navigationBarTitleText": "填写实名信息",
+        "navigationBarBackgroundColor": "#E1251B",
+        "navigationBarTextStyle": "white"
+      }
+    }
+  ],
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#E1251B",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/sendExpress/sendExpress",
+        "iconPath": "static/tabbar/send.png",
+        "selectedIconPath": "static/tabbar/send-active.png",
+        "text": "寄快递"
+      },
+      {
+        "pagePath": "pages/queryExpress/queryExpress",
+        "iconPath": "static/tabbar/query.png",
+        "selectedIconPath": "static/tabbar/query-active.png",
+        "text": "查快递"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "iconPath": "static/tabbar/mine.png",
+        "selectedIconPath": "static/tabbar/mine-active.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "快递",
+    "navigationBarBackgroundColor": "#E1251B",
+    "backgroundColor": "#F5F5F5"
+  }
+}
