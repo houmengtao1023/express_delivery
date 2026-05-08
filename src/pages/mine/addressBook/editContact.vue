@@ -177,28 +177,29 @@ export default {
 <style>
 .ec-page {
   min-height: 100vh;
-  background: #f6f7f9;
+  background: var(--bg-page);
 }
 
 .ec-tip {
   font-size: 26rpx;
-  color: #b47b2d;
-  background: #fff6e9;
-  padding: 14rpx 20rpx;
+  color: var(--color-warning-text);
+  background: var(--color-warning-bg);
+  padding: 14rpx var(--page-pad-x);
 }
 
 .ec-recognize {
-  background: #fff;
-  margin: 12rpx 20rpx 0;
-  border-radius: 14rpx;
+  background: var(--bg-card);
+  margin: 12rpx var(--page-pad-x) 0;
+  border-radius: var(--radius-card-sm);
   padding: 16rpx 18rpx;
+  box-shadow: var(--shadow-card);
 }
 
 .ec-recognize-input {
   width: 100%;
   min-height: 66rpx;
   font-size: 28rpx;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .ec-recognize-actions {
@@ -208,18 +209,19 @@ export default {
 }
 
 .ec-rec-btn {
-  background: #ff3b30;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--bg-card);
   font-size: 28rpx;
-  border-radius: 999rpx;
+  border-radius: var(--radius-pill);
   padding: 8rpx 20rpx;
 }
 
 .ec-card {
-  background: #fff;
-  margin: 16rpx 20rpx;
-  border-radius: 18rpx;
+  background: var(--bg-card);
+  margin: 16rpx var(--page-pad-x);
+  border-radius: var(--radius-card);
   padding: 20rpx;
+  box-shadow: var(--shadow-card);
 }
 
 .ec-tabs {
@@ -230,18 +232,18 @@ export default {
 .ec-tab {
   flex: 1;
   text-align: center;
-  background: #f4f6f9;
-  border-radius: 999rpx;
+  background: var(--bg-wash);
+  border-radius: var(--radius-pill);
   height: 64rpx;
   line-height: 64rpx;
-  color: #9da4b2;
+  color: var(--text-hint);
 }
 
 .ec-tab.active {
-  color: #202632;
+  color: var(--text-title);
   font-weight: 700;
-  background: #fff;
-  border: 1rpx solid #eceff3;
+  background: var(--bg-card);
+  border: 1rpx solid var(--border-hairline);
 }
 
 .ec-group {
@@ -251,7 +253,7 @@ export default {
 .ec-input {
   flex: 1;
   height: 78rpx;
-  border-bottom: 1rpx solid #edf0f5;
+  border-bottom: 1rpx solid var(--border-light);
   font-size: 30rpx;
   margin-right: 20rpx;
 }
@@ -268,7 +270,7 @@ export default {
 .ec-textarea {
   width: 100%;
   min-height: 120rpx;
-  border-bottom: 1rpx solid #edf0f5;
+  border-bottom: 1rpx solid var(--border-light);
   padding: 14rpx 0;
   box-sizing: border-box;
   font-size: 30rpx;
@@ -280,18 +282,18 @@ export default {
 }
 
 .ec-tag {
-  border: 1rpx solid #e4e8ee;
-  border-radius: 999rpx;
+  border: 1rpx solid var(--border-default);
+  border-radius: var(--radius-pill);
   padding: 6rpx 24rpx;
   font-size: 28rpx;
-  color: #666;
+  color: var(--text-secondary);
   margin-right: 14rpx;
 }
 
 .ec-tag.active {
-  color: #ff3b30;
-  border-color: #ff3b30;
-  background: #fff1f0;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
 }
 
 .ec-default-row {
@@ -309,39 +311,39 @@ export default {
 .ec-check {
   width: 34rpx;
   height: 34rpx;
-  border: 1rpx solid #d7dce5;
+  border: 1rpx solid var(--border-default);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  background: #fff;
+  color: var(--bg-card);
+  background: var(--bg-card);
   font-size: 22rpx;
   margin-right: 12rpx;
 }
 
 .ec-check.checked {
-  background: #ff3b30;
-  border-color: #ff3b30;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .ec-default-text,
 .ec-clear {
   font-size: 32rpx;
-  color: #555d6b;
+  color: var(--text-tertiary);
 }
 
 .ec-footer {
   position: fixed;
-  left: 20rpx;
-  right: 20rpx;
+  left: var(--page-pad-x);
+  right: var(--page-pad-x);
   bottom: 24rpx;
 }
 
 .ec-confirm {
-  background: #ff3b30;
-  color: #fff;
-  border-radius: 999rpx;
+  background: var(--color-primary);
+  color: var(--bg-card);
+  border-radius: var(--radius-pill);
   font-size: 36rpx;
   height: 88rpx;
   line-height: 88rpx;

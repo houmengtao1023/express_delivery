@@ -24,7 +24,7 @@
     </view>
 
     <view class="mine-menu-card">
-      <view class="mine-menu-row highlight" @click="goRealName">
+      <view class="mine-menu-row" @click="goRealName">
         <view class="mine-menu-left">
           <text class="mine-menu-icon">🪪</text>
           <view class="mine-menu-texts">
@@ -118,7 +118,7 @@ export default {
   width: 100%;
   box-sizing: border-box;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--bg-page);
   overflow-x: hidden;
 }
 
@@ -127,12 +127,12 @@ export default {
   box-sizing: border-box;
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  background-color: #c41e17;
-  background-image: linear-gradient(180deg, #e1251b 0%, #c41e17 100%);
+  background-color: var(--color-primary-dark);
+  background-image: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   /* 轻微上移，盖住导航栏与页面内容之间的亚像素接缝 */
   margin-top: -1rpx;
-  padding: calc(48rpx + 1rpx) 32rpx 72rpx;
-  color: #fff;
+  padding: calc(48rpx + 1rpx) var(--page-pad-x) 72rpx;
+  color: var(--text-on-primary);
 }
 
 .mine-user-block {
@@ -174,10 +174,10 @@ export default {
 }
 
 .mine-data-card {
-  background: #fff;
-  margin: -40rpx 24rpx 20rpx;
-  border-radius: 16rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  background: var(--bg-card);
+  margin: -40rpx var(--page-pad-x) 20rpx;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
   display: flex;
   padding: 24rpx 0;
 }
@@ -188,33 +188,33 @@ export default {
 }
 
 .mine-data-item-tap {
-  border-right: 1rpx solid #f0f0f0;
+  border-right: 1rpx solid var(--border-hairline);
 }
 
 .mine-data-hint {
   display: block;
   margin-top: 6rpx;
   font-size: 22rpx;
-  color: #e1251b;
+  color: var(--color-primary);
 }
 
 .mine-data-num {
   font-size: 40rpx;
-  color: #e1251b;
+  color: var(--color-primary);
   font-weight: 700;
 }
 
 .mine-data-label {
   font-size: 24rpx;
-  color: #666;
+  color: var(--text-secondary);
   margin-top: 8rpx;
 }
 
 .mine-menu-card {
-  background: #fff;
-  margin: 0 24rpx 24rpx;
-  border-radius: 16rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  background: var(--bg-card);
+  margin: 0 var(--page-pad-x) var(--page-pad-x);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
@@ -222,7 +222,7 @@ export default {
   display: flex;
   align-items: center;
   padding: 28rpx 24rpx;
-  border-bottom: 1rpx solid #f5f5f5;
+  border-bottom: 1rpx solid var(--bg-page);
 }
 
 .mine-menu-row:last-child {
@@ -230,7 +230,7 @@ export default {
 }
 
 .mine-menu-row.highlight {
-  background: linear-gradient(90deg, #fff9f9 0%, #ffffff 100%);
+  background: linear-gradient(90deg, var(--color-primary-soft) 0%, var(--bg-card) 100%);
 }
 
 .mine-menu-left {
@@ -251,7 +251,7 @@ export default {
 
 .mine-menu-title {
   font-size: 30rpx;
-  color: #333;
+  color: var(--text-body);
   font-weight: 600;
 }
 
@@ -262,7 +262,7 @@ export default {
 
 .mine-menu-desc {
   font-size: 24rpx;
-  color: #999;
+  color: var(--text-hint);
   margin-top: 6rpx;
 }
 
@@ -273,20 +273,20 @@ export default {
 
 .mine-badge {
   font-size: 24rpx;
-  color: #e1251b;
-  background: #fff2f0;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
   padding: 6rpx 16rpx;
   border-radius: 999rpx;
   margin-right: 8rpx;
 }
 
 .mine-badge.ok {
-  color: #52c41a;
-  background: #f6ffed;
+  color: var(--color-success);
+  background: var(--color-success-soft);
 }
 
 .mine-arrow {
   font-size: 36rpx;
-  color: #ccc;
+  color: var(--border-strong);
 }
 </style>

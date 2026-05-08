@@ -55,8 +55,8 @@ export default {
 <style>
 .ord-page {
   min-height: 100vh;
-  background: #f6f7f9;
-  padding: 16rpx 20rpx;
+  background: var(--bg-page);
+  padding: 16rpx var(--page-pad-x);
   box-sizing: border-box;
 }
 .ord-empty {
@@ -69,21 +69,22 @@ export default {
 .ord-empty-text {
   margin-top: 16rpx;
   font-size: 32rpx;
-  color: #333;
+  color: var(--text-body);
 }
 .ord-empty-hint {
   margin-top: 12rpx;
   font-size: 26rpx;
-  color: #999;
+  color: var(--text-hint);
 }
 .ord-list {
   height: calc(100vh - 40rpx);
 }
 .ord-card {
-  background: #fff;
-  border-radius: 16rpx;
+  background: var(--bg-card);
+  border-radius: var(--radius-card);
   padding: 20rpx;
   margin-bottom: 14rpx;
+  box-shadow: var(--shadow-card);
 }
 .ord-head {
   display: flex;
@@ -92,36 +93,36 @@ export default {
 }
 .ord-brand {
   font-size: 22rpx;
-  color: #e1251b;
-  background: #fff2f0;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
   padding: 2rpx 10rpx;
   border-radius: 6rpx;
   margin-right: 10rpx;
 }
 .ord-no {
   font-size: 28rpx;
-  color: #333;
+  color: var(--text-body);
   flex: 1;
 }
 .ord-status {
   font-size: 26rpx;
-  color: #e1251b;
+  color: var(--color-primary);
 }
 .ord-route {
   margin-top: 12rpx;
   font-size: 26rpx;
-  color: #666;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   flex-wrap: wrap;
 }
 .ord-arrow {
   margin: 0 12rpx;
-  color: #ccc;
+  color: var(--border-strong);
 }
 .ord-meta {
   margin-top: 8rpx;
   font-size: 24rpx;
-  color: #999;
+  color: var(--text-hint);
 }
 </style>

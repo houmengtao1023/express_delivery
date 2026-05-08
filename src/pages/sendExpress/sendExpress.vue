@@ -293,22 +293,17 @@ export default {
 </script>
 
 <style>
-page {
-  background-color: #f6f7f9;
-  color: #1f2430;
-}
-
 .sd-page {
   min-height: 100vh;
-  background: #f6f7f9;
-  padding: 18rpx 20rpx 0;
+  background: var(--bg-page);
+  padding: var(--page-pad-y) var(--page-pad-x) 0;
   box-sizing: border-box;
-  color: #1f2430;
+  color: var(--text-title);
 }
 
 .sd-card {
-  background: #fff;
-  border-radius: 18rpx;
+  background: var(--bg-card);
+  border-radius: var(--radius-card);
   margin-bottom: 16rpx;
 }
 
@@ -322,7 +317,7 @@ page {
   width: 52rpx;
   height: 52rpx;
   border-radius: 50%;
-  color: #fff;
+  color: var(--text-on-primary);
   font-size: 28rpx;
   line-height: 52rpx;
   text-align: center;
@@ -330,11 +325,11 @@ page {
 }
 
 .sd-badge.send {
-  background: #2f3745;
+  background: var(--text-title);
 }
 
 .sd-badge.recv {
-  background: #ff4b42;
+  background: var(--color-primary);
 }
 
 .sd-contact-main {
@@ -348,40 +343,40 @@ page {
 
 .sd-name {
   font-size: 42rpx;
-  color: #1f2430;
+  color: var(--text-title);
   font-weight: 700;
 }
 
 .sd-phone {
   margin-left: 14rpx;
   font-size: 42rpx;
-  color: #1f2430;
+  color: var(--text-title);
 }
 
 .sd-contact-addr {
   margin-top: 8rpx;
   font-size: 30rpx;
-  color: #8c94a2;
+  color: var(--text-tertiary);
   line-height: 1.4;
 }
 
 .sd-right-action {
-  color: #596173;
+  color: var(--text-tertiary);
   font-size: 32rpx;
   margin-left: 12rpx;
 }
 
 .sd-line {
   height: 1rpx;
-  background: #eff2f6;
+  background: var(--border-light);
   margin: 0 22rpx;
 }
 
 .sd-switch-wrap {
-  margin: 18rpx 20rpx 8rpx;
+  margin: var(--page-pad-y) var(--page-pad-x) 8rpx;
   height: 68rpx;
-  background: #f1f3f7;
-  border-radius: 999rpx;
+  background: var(--bg-muted);
+  border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
   padding: 4rpx;
@@ -391,14 +386,14 @@ page {
   flex: 1;
   text-align: center;
   font-size: 32rpx;
-  color: #656e80;
+  color: var(--text-tertiary);
   line-height: 60rpx;
-  border-radius: 999rpx;
+  border-radius: var(--radius-pill);
 }
 
 .sd-switch-item.active {
-  background: #fff;
-  color: #ff3b30;
+  background: var(--bg-card);
+  color: var(--color-primary);
   font-weight: 700;
 }
 
@@ -412,12 +407,12 @@ page {
 
 .sd-label {
   font-size: 38rpx;
-  color: #1f2430;
+  color: var(--text-title);
 }
 
 .sd-value {
   font-size: 38rpx;
-  color: #1f2430;
+  color: var(--text-title);
 }
 
 .sd-inline-tabs {
@@ -426,20 +421,20 @@ page {
 
 .sd-inline-tab {
   font-size: 32rpx;
-  color: #8b93a1;
+  color: var(--text-hint);
   margin-left: 24rpx;
   position: relative;
 }
 
 .sd-inline-tab.active {
-  color: #ff3b30;
+  color: var(--color-primary);
   font-weight: 700;
 }
 
 .sd-station-card {
   margin: 14rpx 22rpx 18rpx;
-  background: #f7f8fa;
-  border-radius: 14rpx;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-card-sm);
   padding: 16rpx;
 }
 
@@ -450,26 +445,26 @@ page {
 
 .sd-station-name {
   font-size: 36rpx;
-  color: #1f2430;
+  color: var(--text-title);
   font-weight: 700;
 }
 
 .sd-station-sub {
   margin-left: 10rpx;
   font-size: 30rpx;
-  color: #ff4b42;
+  color: var(--color-primary);
 }
 
 .sd-station-tag {
   margin-left: 12rpx;
   font-size: 28rpx;
-  color: #ff4b42;
+  color: var(--color-primary);
 }
 
 .sd-station-addr {
   margin-top: 8rpx;
   font-size: 28rpx;
-  color: #8c94a2;
+  color: var(--text-tertiary);
 }
 
 .sd-bottom-space {
@@ -481,12 +476,12 @@ page {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #fff;
+  background: var(--bg-card);
   display: flex;
   align-items: center;
-  padding: 12rpx 20rpx 24rpx;
+  padding: 12rpx var(--page-pad-x) 24rpx;
   box-sizing: border-box;
-  box-shadow: 0 -6rpx 18rpx rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-footer);
 }
 
 .sd-fee-box {
@@ -496,14 +491,14 @@ page {
 }
 
 .sd-fee {
-  color: #ff3b30;
+  color: var(--color-primary);
   font-size: 46rpx;
   font-weight: 700;
 }
 
 .sd-detail {
   margin-left: 14rpx;
-  color: #1f2430;
+  color: var(--text-title);
   font-size: 38rpx;
 }
 
@@ -511,14 +506,10 @@ page {
   width: 300rpx;
   height: 86rpx;
   line-height: 86rpx;
-  border-radius: 999rpx;
-  color: #fff;
-  background: #ff3b30;
+  border-radius: var(--radius-pill);
+  color: var(--bg-card);
+  background: var(--color-primary);
   font-size: 40rpx;
-  border: none;
-}
-
-.sd-order-btn::after {
   border: none;
 }
 
@@ -528,7 +519,7 @@ page {
   right: 0;
   top: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--mask-scrim);
   display: flex;
   align-items: flex-end;
   z-index: 20;
@@ -536,7 +527,7 @@ page {
 
 .sd-picker-panel {
   width: 100%;
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 20rpx 20rpx 0 0;
 }
 
@@ -545,19 +536,19 @@ page {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24rpx;
-  border-bottom: 1rpx solid #f0f2f5;
+  padding: 0 var(--page-pad-x);
+  border-bottom: 1rpx solid var(--border-hairline);
 }
 
 .sd-picker-title {
   font-size: 42rpx;
   font-weight: 700;
-  color: #1f2430;
+  color: var(--text-title);
 }
 
 .sd-picker-close {
   font-size: 40rpx;
-  color: #9aa1af;
+  color: var(--text-hint);
 }
 
 .sd-picker-body {
@@ -567,7 +558,7 @@ page {
 
 .sd-day-col {
   width: 32%;
-  background: #f7f7f8;
+  background: var(--bg-elevated);
 }
 
 .sd-day-item {
@@ -575,13 +566,13 @@ page {
   line-height: 96rpx;
   text-align: center;
   font-size: 36rpx;
-  color: #1f2430;
+  color: var(--text-title);
 }
 
 .sd-day-item.active {
-  color: #ff3b30;
+  color: var(--color-primary);
   font-weight: 700;
-  background: #fff;
+  background: var(--bg-card);
 }
 
 .sd-slot-col {
@@ -593,22 +584,22 @@ page {
   line-height: 96rpx;
   text-align: center;
   font-size: 38rpx;
-  color: #1f2430;
+  color: var(--text-title);
 }
 
 .sd-slot-item.active {
-  color: #ff3b30;
+  color: var(--color-primary);
   font-weight: 700;
 }
 
 .sd-picker-foot {
-  padding: 12rpx 20rpx 20rpx;
+  padding: 12rpx var(--page-pad-x) 20rpx;
 }
 
 .sd-picker-btn {
-  background: #ff3b30;
-  color: #fff;
-  border-radius: 999rpx;
+  background: var(--color-primary);
+  color: var(--bg-card);
+  border-radius: var(--radius-pill);
   font-size: 34rpx;
   height: 80rpx;
   line-height: 80rpx;

@@ -204,8 +204,8 @@ export default {
 <style>
 .ab-page {
   height: 100vh;
-  background: #f6f7f9;
-  padding: 18rpx 20rpx 0;
+  background: var(--bg-page);
+  padding: var(--page-pad-y) var(--page-pad-x) 0;
   box-sizing: border-box;
 }
 
@@ -213,8 +213,8 @@ export default {
   display: flex;
   align-items: center;
   height: 72rpx;
-  background: #fff;
-  border-radius: 999rpx;
+  background: var(--bg-card);
+  border-radius: var(--radius-pill);
   padding: 0 18rpx;
 }
 
@@ -229,7 +229,7 @@ export default {
 }
 
 .ab-search-ph {
-  color: #b8bec9;
+  color: var(--text-hint);
 }
 
 .ab-list {
@@ -238,10 +238,11 @@ export default {
 }
 
 .ab-item {
-  background: #fff;
-  border-radius: 20rpx;
+  background: var(--bg-card);
+  border-radius: var(--radius-card);
   padding: 22rpx;
   margin-bottom: 16rpx;
+  box-shadow: var(--shadow-card);
 }
 
 .ab-top {
@@ -253,42 +254,42 @@ export default {
   width: 40rpx;
   height: 40rpx;
   border-radius: 50%;
-  border: 1rpx solid #d2d7e1;
+  border: 1rpx solid var(--border-strong);
   margin-right: 14rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--bg-card);
   font-size: 24rpx;
 }
 
 .ab-select.active {
-  border-color: #ff3b30;
-  background: #ff3b30;
+  border-color: var(--color-primary);
+  background: var(--color-primary);
 }
 
 .ab-name {
   font-size: 38rpx;
   font-weight: 700;
-  color: #1f2430;
+  color: var(--text-title);
 }
 
 .ab-phone {
   font-size: 38rpx;
-  color: #1f2430;
+  color: var(--text-title);
   margin-left: 14rpx;
 }
 
 .ab-address {
   margin-top: 10rpx;
   font-size: 34rpx;
-  color: #8d94a3;
+  color: var(--text-tertiary);
   line-height: 1.45;
 }
 
 .ab-line {
   height: 1rpx;
-  background: #f0f2f5;
+  background: var(--border-hairline);
   margin: 18rpx 0 14rpx;
 }
 
@@ -304,7 +305,7 @@ export default {
 }
 
 .ab-default-label {
-  color: #8d94a3;
+  color: var(--text-tertiary);
   font-size: 30rpx;
   margin-right: 10rpx;
 }
@@ -313,20 +314,20 @@ export default {
   width: 66rpx;
   height: 38rpx;
   border-radius: 30rpx;
-  background: #e9ecf2;
+  background: var(--bg-muted);
   padding: 4rpx;
   box-sizing: border-box;
 }
 
 .ab-switch.on {
-  background: #ff3b30;
+  background: var(--color-primary);
 }
 
 .ab-dot {
   width: 30rpx;
   height: 30rpx;
   border-radius: 50%;
-  background: #fff;
+  background: var(--bg-card);
 }
 
 .ab-switch.on .ab-dot {
@@ -340,12 +341,12 @@ export default {
 
 .ab-op {
   font-size: 32rpx;
-  color: #6e7584;
+  color: var(--text-tertiary);
   margin-left: 22rpx;
 }
 
 .ab-op.delete {
-  color: #8d94a3;
+  color: var(--text-hint);
 }
 
 .ab-empty {
@@ -360,20 +361,20 @@ export default {
 .ab-empty-text {
   margin-top: 14rpx;
   font-size: 28rpx;
-  color: #8d94a3;
+  color: var(--text-tertiary);
 }
 
 .ab-footer {
   position: fixed;
-  left: 20rpx;
-  right: 20rpx;
+  left: var(--page-pad-x);
+  right: var(--page-pad-x);
   bottom: 26rpx;
   display: flex;
 }
 
 .ab-manage,
 .ab-add {
-  border-radius: 999rpx;
+  border-radius: var(--radius-pill);
   font-size: 38rpx;
   height: 86rpx;
   line-height: 86rpx;
@@ -382,15 +383,15 @@ export default {
 .ab-manage {
   flex: 1;
   margin-right: 18rpx;
-  color: #ff3b30;
-  background: #fff;
-  border: 1rpx solid #ff3b30;
+  color: var(--color-primary);
+  background: var(--bg-card);
+  border: 1rpx solid var(--color-primary);
 }
 
 .ab-add {
   flex: 1;
-  color: #fff;
-  background: #ff3b30;
+  color: var(--bg-card);
+  background: var(--color-primary);
   border: none;
 }
 

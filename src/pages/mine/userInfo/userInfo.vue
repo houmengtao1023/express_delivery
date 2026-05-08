@@ -312,15 +312,15 @@ export default {
 <style>
 .cert-page {
   min-height: 100vh;
-  background: #f6f7f9;
-  padding: 20rpx;
+  background: var(--bg-page);
+  padding: var(--page-pad-x);
   box-sizing: border-box;
 }
 
 .cert-status {
-  background: #eef7ff;
-  border: 1rpx solid #d3e8ff;
-  border-radius: 12rpx;
+  background: var(--color-info-soft);
+  border: 1rpx solid var(--color-info-border);
+  border-radius: var(--radius-card-sm);
   padding: 18rpx 20rpx;
   margin-bottom: 16rpx;
 }
@@ -328,34 +328,34 @@ export default {
 .cert-status-tag {
   display: inline-block;
   font-size: 22rpx;
-  color: #e1251b;
-  background: #fff2f1;
-  border: 1rpx solid #ffd2cf;
-  border-radius: 999rpx;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border: 1rpx solid var(--color-primary-muted);
+  border-radius: var(--radius-pill);
   padding: 4rpx 14rpx;
 }
 
 .cert-status-tag.ok {
-  color: #389e0d;
-  background: #f6ffed;
-  border-color: #d9f7be;
+  color: var(--color-success);
+  background: var(--color-success-soft);
+  border-color: var(--color-success-border);
 }
 
 .cert-status-tip {
   font-size: 24rpx;
-  color: #5b7ea6;
+  color: var(--color-info-text);
   margin-top: 10rpx;
 }
 
 .cert-card {
-  background: #fff;
-  border-radius: 14rpx;
-  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.06);
+  background: var(--bg-card);
+  border-radius: var(--radius-card-sm);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
 .cert-group {
-  border-bottom: 1rpx solid #f1f1f1;
+  border-bottom: 1rpx solid var(--border-hairline);
   padding: 22rpx 20rpx;
 }
 
@@ -365,13 +365,13 @@ export default {
 
 .cert-label {
   font-size: 28rpx;
-  color: #222;
+  color: var(--text-body);
   font-weight: 600;
   margin-bottom: 10rpx;
 }
 
 .must {
-  color: #e1251b;
+  color: var(--color-primary);
   margin-left: 4rpx;
 }
 
@@ -379,18 +379,18 @@ export default {
   width: 100%;
   height: 76rpx;
   box-sizing: border-box;
-  border: 1rpx solid #dedede;
+  border: 1rpx solid var(--border-input);
   border-radius: 10rpx;
-  background: #fafafa;
+  background: var(--bg-input);
   padding: 0 16rpx;
   font-size: 28rpx;
-  color: #333;
+  color: var(--text-body);
 }
 
 .cert-extra {
   margin-top: 8rpx;
   font-size: 22rpx;
-  color: #9b9b9b;
+  color: var(--text-hint);
 }
 
 .cert-phone {
@@ -403,10 +403,10 @@ export default {
   height: 76rpx;
   line-height: 76rpx;
   text-align: center;
-  border: 1rpx solid #dedede;
+  border: 1rpx solid var(--border-input);
   border-right: none;
   border-radius: 10rpx 0 0 10rpx;
-  background: #fafafa;
+  background: var(--bg-input);
   font-size: 28rpx;
 }
 
@@ -415,9 +415,9 @@ export default {
 }
 
 .cert-photo {
-  border: 2rpx dashed #e2e2e2;
-  border-radius: 12rpx;
-  background: #fbfbfb;
+  border: 2rpx dashed var(--border-default);
+  border-radius: var(--radius-card-sm);
+  background: var(--bg-input);
   overflow: hidden;
 }
 
@@ -427,7 +427,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #999;
+  color: var(--text-hint);
   font-size: 26rpx;
 }
 
@@ -445,17 +445,17 @@ export default {
   display: flex;
   justify-content: flex-end;
   padding: 12rpx 14rpx;
-  background: #fff;
+  background: var(--bg-card);
 }
 
 .cert-photo-btn {
   font-size: 24rpx;
-  color: #4d7dbd;
+  color: var(--color-link-muted);
   margin-left: 24rpx;
 }
 
 .cert-photo-btn.danger {
-  color: #e1251b;
+  color: var(--color-primary);
 }
 
 .cert-agreement {
@@ -467,28 +467,28 @@ export default {
 .cert-check {
   width: 34rpx;
   height: 34rpx;
-  border: 1rpx solid #d6d6d6;
+  border: 1rpx solid var(--border-input);
   border-radius: 8rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--bg-card);
   font-size: 22rpx;
   margin-right: 12rpx;
 }
 
 .cert-check.checked {
-  background: #e1251b;
-  border-color: #e1251b;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .cert-agreement-text {
   font-size: 24rpx;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .cert-link {
-  color: #2b6cb0;
+  color: var(--color-link);
   text-decoration: underline;
 }
 
@@ -498,7 +498,7 @@ export default {
 
 .cert-error {
   margin-top: 8rpx;
-  color: #e1251b;
+  color: var(--color-primary);
   font-size: 23rpx;
 }
 
@@ -513,8 +513,8 @@ export default {
 }
 
 .cert-submit {
-  background: #e1251b;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--bg-card);
 }
 
 .cert-submit[disabled] {
@@ -523,9 +523,9 @@ export default {
 
 .cert-cancel {
   margin-top: 12rpx;
-  color: #666;
-  background: #fff;
-  border: 1rpx solid #e5e5e5;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1rpx solid var(--border-input);
 }
 
 .cert-modal-mask {
@@ -534,7 +534,7 @@ export default {
   right: 0;
   top: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--mask-scrim);
   display: flex;
   align-items: flex-end;
   z-index: 100;
@@ -542,8 +542,8 @@ export default {
 
 .cert-modal {
   width: 100%;
-  background: #fff;
-  border-radius: 18rpx 18rpx 0 0;
+  background: var(--bg-card);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
   max-height: 78vh;
   overflow: hidden;
 }
@@ -553,23 +553,24 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 20rpx;
-  border-bottom: 1rpx solid #eee;
+  border-bottom: 1rpx solid var(--border-hairline);
 }
 
 .cert-modal-title {
   font-size: 32rpx;
   font-weight: 700;
+  color: var(--text-title);
 }
 
 .cert-modal-close {
   font-size: 30rpx;
-  color: #999;
+  color: var(--text-hint);
 }
 
 .cert-modal-body {
   padding: 20rpx;
   font-size: 26rpx;
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.8;
   max-height: 50vh;
   overflow-y: auto;
@@ -579,7 +580,7 @@ export default {
   margin-top: 12rpx;
   margin-bottom: 8rpx;
   font-size: 28rpx;
-  color: #333;
+  color: var(--text-body);
   font-weight: 600;
 }
 
@@ -588,8 +589,8 @@ export default {
 }
 
 .cert-modal-ok {
-  background: #e1251b;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--bg-card);
   border-radius: 10rpx;
   font-size: 28rpx;
 }
